@@ -1,0 +1,15 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+lda	../trab1.py	/^lda = LinearDiscriminantAnalysis(n_components = 2)$/;"	kind:variable	line:34
+sc	../trab1.py	/^sc = StandardScaler()$/;"	kind:variable	line:28
+trab1.py	../trab1.py	1;"	kind:file	line:1
+x_attr_test	../trab1.py	/^x_attr_test = lda.transform(x_attr_test)$/;"	kind:variable	line:36
+x_attr_test	../trab1.py	/^x_attr_test = np.empty(shape=(60000,2,2))$/;"	kind:variable	line:14
+x_attr_test	../trab1.py	/^x_attr_test = sc.transform(x_attr_test)$/;"	kind:variable	line:30
+x_attr_train	../trab1.py	/^x_attr_train = lda.fit_transform(x_attr_train, y_train)$/;"	kind:variable	line:35
+x_attr_train	../trab1.py	/^x_attr_train = np.empty(shape=(60000,2,2))$/;"	kind:variable	line:13
+x_attr_train	../trab1.py	/^x_attr_train = sc.fit_transform(x_attr_train)$/;"	kind:variable	line:29
