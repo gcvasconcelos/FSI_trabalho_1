@@ -33,42 +33,37 @@ def split_and_sum_array(array, n_of_splits):
 x_train = split_and_sum_array(x_train, 4)
 x_test = split_and_sum_array(x_test, 4)
 
-# # garante que os dados são float e normaliza os dados
-# x_train = x_train.astype('float32')
-# x_test = x_test.astype('float32')
+# garante que os dados são float e os normaliza
+x_train = x_train.astype('float32')
+x_test = x_test.astype('float32')
 
-# sc = StandardScaler()
-# x_train = sc.fit_transform(x_train)
-# x_test = sc.transform(x_test)
+sc = StandardScaler()
+x_train = sc.fit_transform(x_train)
+x_test = sc.transform(x_test)
 
-# # aplica LDA nos dados de treino
+# aplica LDA nos dados de treino
 
-# lda = LinearDiscriminantAnalysis(n_components = 2)
-# x_lda_train = lda.fit_transform(x_train, y_train) # supervisionado
-# x_lda_test = lda.transform(x_test)
-# print(lda.predict([x_test[10]]))
-# print(lda.predict([x_test[13]]))
-# print(lda.predict([x_test[25]]))
-# print(lda.predict([x_test[28]]))
+lda = LinearDiscriminantAnalysis(n_components = 2)
+x_lda_train = lda.fit_transform(x_train, y_train) # supervisionado
 
-# from sklearn.metrics import confusion_matrix  
-# cm = confusion_matrix(y_test, y_pred)  
-# print(cm)
+y_pred = lda.predict(x_test)
+
 
 
 # # matriz de confusão e acuracia
-# from sklearn.metrics import confusion_matrix  
-# from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix  
+from sklearn.metrics import accuracy_score
 
-# cm = confusion_matrix(y_test, y_pred)  
-# print(cm)  
-# print('Accuracy ' + str(accuracy_score(y_test, y_pred)))  
+cm = confusion_matrix(y_test, y_pred)  
+print(cm)  
+print('Accuracy ' + str(accuracy_score(y_test, y_pred)))  
 
 # # abre uma imagem e seu label
 # print(y_train[0])
 # plt.imshow(x_train[0], cmap='Greys')
 
-# print(x_test[10])
-# print(x_test[13])
-# print(x_test[25])
-# print(x_test[28])
+# # valores teste que tem label '0'
+# print(lda.predict([x_test[10]]))
+# print(lda.predict([x_test[13]]))
+# print(lda.predict([x_test[25]]))
+# print(lda.predict([x_test[28]]))
