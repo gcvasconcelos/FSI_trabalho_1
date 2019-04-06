@@ -10,48 +10,51 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 # train contem 10.000 imagens e test contem 60.000
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
 
-# tranforma a imagem 28x28 em um vetor de 784
-def threeD_to_twoD(array):
-  return array.reshape((array.shape[1]*array.shape[2]), array.shape[0]).transpose()
+def split(array, nrows, ncols):
+    r, h = array.shape
+    return (array.reshape(h//nrows, nrows, -1, ncols)
+                .swapaxes(1, 2)
+                .reshape(-1, nrows, ncols))
 
-x_train = threeD_to_twoD(x_train)
-x_test = threeD_to_twoD(x_test)
-
-# pega regioes de cada imagem e soma seus valores em escala de cinza
+# pega a matriz da imagem, divide em n submatrizes, soma o valor total dass submatrizes e armazena no vetor 
 def split_and_sum_array(array, n_of_splits):
-  new_array = np.empty(shape=(array.shape[0],n_of_splits))
+  new_array = np.empty(shape=(array.shape[0],n_of_splits**2))
+  m = 28 // n_of_splits # precisa ser divisivel por 28 (1, 2, 4, 7, 14, 28)
   i = 0
-  for big_array in array:
-    subarrays = np.split(big_array, n_of_splits)
+  for element in array:
+    subarrays = split(element, m, m)
     j = 0
-    for subarray in subarrays:
-      new_array[i][j] = subarray.sum()
+    for sector in subarrays:
+      new_array[i][j] = sector.sum()
       j += 1
     i += 1
   return new_array
 
-x_train = split_and_sum_array(x_train, 16)
-x_test = split_and_sum_array(x_test, 16)
+x_train = split_and_sum_array(x_train, 4)
+x_test = split_and_sum_array(x_test, 4)
 
-# garante que os dados são float e normaliza os dados
-x_train = x_train.astype('float32')
-x_test = x_test.astype('float32')
+# # garante que os dados são float e normaliza os dados
+# x_train = x_train.astype('float32')
+# x_test = x_test.astype('float32')
 
-sc = StandardScaler()
-x_train = sc.fit_transform(x_train)
-x_test = sc.transform(x_test)
+# sc = StandardScaler()
+# x_train = sc.fit_transform(x_train)
+# x_test = sc.transform(x_test)
 
-# aplica LDA nos dados de treino
-lda = LinearDiscriminantAnalysis(n_components = 2 )
-x_lda = lda.fit_transform(x_train, y_train)
+# # aplica LDA nos dados de treino
 
+# lda = LinearDiscriminantAnalysis(n_components = 2)
+# x_lda_train = lda.fit_transform(x_train, y_train) # supervisionado
+# x_lda_test = lda.transform(x_test)
+# print(lda.predict([x_test[10]]))
+# print(lda.predict([x_test[13]]))
+# print(lda.predict([x_test[25]]))
+# print(lda.predict([x_test[28]]))
 
-# markers = ['s','x','o']
-# colors = ['r','g','b']
-# fig = plt.figure(figsize=(10,10))
-# ax0 = fig.add_subplot(111)
-# for l,m,c in zip(np.unique(y_train),markers,colors):
-#   ax0.scatter(x_train[:,0][y_train==l],x_train[:,1][y_train==l],c=c,marker=m)
+# from sklearn.metrics import confusion_matrix  
+# cm = confusion_matrix(y_test, y_pred)  
+# print(cm)
+
 
 # # matriz de confusão e acuracia
 # from sklearn.metrics import confusion_matrix  
@@ -64,4 +67,8 @@ x_lda = lda.fit_transform(x_train, y_train)
 # # abre uma imagem e seu label
 # print(y_train[0])
 # plt.imshow(x_train[0], cmap='Greys')
-# plt.show()
+
+# print(x_test[10])
+# print(x_test[13])
+# print(x_test[25])
+# print(x_test[28])
