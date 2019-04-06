@@ -33,21 +33,18 @@ def split_and_sum_array(array, n_of_splits):
 x_train = split_and_sum_array(x_train, 16)
 x_test = split_and_sum_array(x_test, 16)
 
-# garante que os dados são float e normaliza
+# garante que os dados são float e normaliza os dados
+x_train = x_train.astype('float32')
+x_test = x_test.astype('float32')
 
-# x_train = x_train.astype('float32')
-# x_test = x_test.astype('float32')
+sc = StandardScaler()
+x_train = sc.fit_transform(x_train)
+x_test = sc.transform(x_test)
 
-# sc = StandardScaler()
-# x_train = sc.fit_transform(x_train)
-# x_test = sc.transform(x_test)
+# aplica LDA nos dados de treino
+lda = LinearDiscriminantAnalysis(n_components = 2 )
+x_lda = lda.fit_transform(x_train, y_train)
 
-# # aplica LDA nos dados de treino
-# lda = LinearDiscriminantAnalysis(n_components = 2 )
-# x_lda = lda.fit_transform(x_train, y_train)
-# print(x_lda)
-
-# x_test = lda.transform(x_test)
 
 # markers = ['s','x','o']
 # colors = ['r','g','b']
