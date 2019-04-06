@@ -48,22 +48,17 @@ x_lda_train = lda.fit_transform(x_train, y_train) # supervisionado
 
 y_pred = lda.predict(x_test)
 
-
-
 # # matriz de confusão e acuracia
 from sklearn.metrics import confusion_matrix  
 from sklearn.metrics import accuracy_score
+import pandas as pd
+import seaborn as sn
 
 cm = confusion_matrix(y_test, y_pred)  
-print(cm)  
+df_cm = pd.DataFrame(cm, index = [i for i in "0123456789"],
+                    columns = [i for i in "0123456789"])
+plt.figure(figsize = (10,7))
+sn.heatmap(df_cm)
+plt.show()
+
 print('Accuracy ' + str(accuracy_score(y_test, y_pred)))  
-
-# # abre uma imagem e seu label
-# print(y_train[0])
-# plt.imshow(x_train[0], cmap='Greys')
-
-# # valores teste que tem label '0'
-# print(lda.predict([x_test[10]]))
-# print(lda.predict([x_test[13]]))
-# print(lda.predict([x_test[25]]))
-# print(lda.predict([x_test[28]]))
