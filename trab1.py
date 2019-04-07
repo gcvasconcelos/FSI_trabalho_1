@@ -16,7 +16,7 @@ from sklearn.metrics import accuracy_score
 # train contem 10.000 imagens e test contem 60.000
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
 
-def lda_classifier(x_train, y_train, x_test):
+def lda_classifier(x_train, y_train, x_test, y_test):
   # aplica LDA nos dados de treino
   lda = LinearDiscriminantAnalysis(n_components = 2)
   x_lda_train = lda.fit_transform(x_train, y_train) # supervisionado
@@ -32,13 +32,13 @@ def lda_classifier(x_train, y_train, x_test):
   sn.heatmap(df_cm)
   plt.show()
 
-def knn_classifier(x_train, y_train, x_test):
+def knn_classifier(x_train, y_train, x_test, y_test):
   knn = KNeighborsClassifier(n_neighbors=2)
   x_knn_train = knn.fit(x_train, y_train)
 
   y_knn_pred = knn.predict(x_test)
 
-  print('Accuracy K-nn Algorithm with 2 neighbor(s): {}'.format(str(accuracy_score(y_test, y_knn_pred))))
+  print('Accuracy K-nn Algorithm with 2 neighbor(s): ' + str(accuracy_score(y_test, y_knn_pred)))
 
   cm = confusion_matrix(y_test, y_knn_pred)
   df_cm = pd.DataFrame(cm, index = [i for i in "0123456789"],
@@ -52,7 +52,7 @@ def knn_classifier(x_train, y_train, x_test):
 
   y_knn_pred = knn.predict(x_test)
 
-  print('Accuracy K-nn Algorithm with 15 neighbor(s): {}'.format(str(accuracy_score(y_test, y_knn_pred))))
+  print('Accuracy K-nn Algorithm with 15 neighbor(s): ' + str(accuracy_score(y_test, y_knn_pred)))
 
   cm = confusion_matrix(y_test, y_knn_pred)
   df_cm = pd.DataFrame(cm, index = [i for i in "0123456789"],
@@ -92,5 +92,5 @@ sc = StandardScaler()
 x_train = sc.fit_transform(x_train)
 x_test = sc.transform(x_test)
 
-lda_classifier(x_train, y_train, x_test)
-knn_classifier(x_train, y_train, x_test)
+lda_classifier(x_train, y_train, x_test, y_test)
+knn_classifier(x_train, y_train, x_test, y_test)
