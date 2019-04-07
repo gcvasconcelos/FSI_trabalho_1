@@ -1,14 +1,65 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sn
+
 from sklearn.preprocessing import StandardScaler
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix  
+from sklearn.metrics import accuracy_score
 
 # usa a lib tensorflow para baixar o dataset MNIST 
 # X contem a matriz (28x28) de escala de cinza da imagem (0 a 255)
 # Y contem a informação de qual é o número (0 a 9)
 # train contem 10.000 imagens e test contem 60.000
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+def lda_classifier(x_train, y_train, x_test):
+  # aplica LDA nos dados de treino
+  lda = LinearDiscriminantAnalysis(n_components = 2)
+  x_lda_train = lda.fit_transform(x_train, y_train) # supervisionado
+
+  y_pred = lda.predict(x_test)
+
+  print('Accuracy LDA Algorithm: ' + str(accuracy_score(y_test, y_pred)))
+
+  cm = confusion_matrix(y_test, y_pred)  
+  df_cm = pd.DataFrame(cm, index = [i for i in "0123456789"],
+                      columns = [i for i in "0123456789"])
+  plt.figure(figsize = (10,7))
+  sn.heatmap(df_cm)
+  plt.show()
+
+def knn_classifier(x_train, y_train, x_test):
+  knn = KNeighborsClassifier(n_neighbors=2)
+  x_knn_train = knn.fit(x_train, y_train)
+
+  y_knn_pred = knn.predict(x_test)
+
+  print('Accuracy K-nn Algorithm with 2 neighbor(s): {}'.format(str(accuracy_score(y_test, y_knn_pred))))
+
+  cm = confusion_matrix(y_test, y_knn_pred)
+  df_cm = pd.DataFrame(cm, index = [i for i in "0123456789"],
+                      columns = [i for i in "0123456789"])
+  plt.figure(figsize = (10,7))
+  sn.heatmap(df_cm)
+  plt.show()
+
+  knn = KNeighborsClassifier(n_neighbors=15)
+  x_knn_train = knn.fit(x_train, y_train)
+
+  y_knn_pred = knn.predict(x_test)
+
+  print('Accuracy K-nn Algorithm with 15 neighbor(s): {}'.format(str(accuracy_score(y_test, y_knn_pred))))
+
+  cm = confusion_matrix(y_test, y_knn_pred)
+  df_cm = pd.DataFrame(cm, index = [i for i in "0123456789"],
+                      columns = [i for i in "0123456789"])
+  plt.figure(figsize = (10,7))
+  sn.heatmap(df_cm)
+  plt.show()
 
 def split(array, nrows, ncols):
     r, h = array.shape
@@ -41,24 +92,5 @@ sc = StandardScaler()
 x_train = sc.fit_transform(x_train)
 x_test = sc.transform(x_test)
 
-# aplica LDA nos dados de treino
-
-lda = LinearDiscriminantAnalysis(n_components = 2)
-x_lda_train = lda.fit_transform(x_train, y_train) # supervisionado
-
-y_pred = lda.predict(x_test)
-
-# # matriz de confusão e acuracia
-from sklearn.metrics import confusion_matrix  
-from sklearn.metrics import accuracy_score
-import pandas as pd
-import seaborn as sn
-
-cm = confusion_matrix(y_test, y_pred)  
-df_cm = pd.DataFrame(cm, index = [i for i in "0123456789"],
-                    columns = [i for i in "0123456789"])
-plt.figure(figsize = (10,7))
-sn.heatmap(df_cm)
-plt.show()
-
-print('Accuracy ' + str(accuracy_score(y_test, y_pred)))  
+lda_classifier(x_train, y_train, x_test)
+knn_classifier(x_train, y_train, x_test)
