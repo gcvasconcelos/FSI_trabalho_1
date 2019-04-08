@@ -16,10 +16,10 @@ from sklearn.metrics import accuracy_score
 # train contem 10.000 imagens e test contem 60.000
 (pp_x_train, y_train), (pp_x_test, y_test) = tf.keras.datasets.mnist.load_data()
 
-# inicio do preprocessamento
-def lda_classifier(x_train, y_train, x_test, y_test):
+# função que classifica imagens usando lda, mede a acurácia e printa matriz de confusão
+def lda_classifier(x_train, y_train, x_test, y_test, dimensions):
   # aplica LDA nos dados de treino
-  lda = LinearDiscriminantAnalysis(n_components = 2)
+  lda = LinearDiscriminantAnalysis(n_components = dimensions)
   x_lda_train = lda.fit_transform(x_train, y_train) # supervisionado
 
   y_pred = lda.predict(x_test)
@@ -33,8 +33,9 @@ def lda_classifier(x_train, y_train, x_test, y_test):
   sn.heatmap(df_cm)
   plt.show()
 
-def knn_classifier(x_train, y_train, x_test, y_test):
-  knn = KNeighborsClassifier(n_neighbors=2)
+# função que classifica imagens usando knn, mede a acurácia e printa matriz de confusão
+def knn_classifier(x_train, y_train, x_test, y_test, n):
+  knn = KNeighborsClassifier(n_neighbors=n)
   x_knn_train = knn.fit(x_train, y_train)
 
   y_knn_pred = knn.predict(x_test)
@@ -62,6 +63,7 @@ def knn_classifier(x_train, y_train, x_test, y_test):
   sn.heatmap(df_cm)
   plt.show()
 
+# divide matriz em vetor de submatrizes
 def split(array, nrows, ncols):
     return(array.reshape(array.shape[1]//nrows, nrows, -1, ncols)
                 .swapaxes(1, 2)
@@ -81,9 +83,7 @@ def split_and_sum_image(images, n_of_splits):
     i += 1
   return new_images
 
-x_train = split_and_sum_image(pp_x_train, 4)
-x_test = split_and_sum_image(pp_x_test, 4)
-
+# pega a média do centro da imagem e adiciona a lista de critérios
 def get_center_mean(image, array):
   new_array = np.empty(shape=(array.shape[0], array.shape[1]+1))
   i = 0
@@ -93,37 +93,23 @@ def get_center_mean(image, array):
     i += 1
   return new_array
 
-x_train = get_center_mean(pp_x_train, x_train)
-x_test = get_center_mean(pp_x_test, x_test)
+# agrega toda as funções de processamento 
+def preprocessing(pp_x_train, pp_x_test):
+  x_train = split_and_sum_image(pp_x_train, 14)
+  x_test = split_and_sum_image(pp_x_test, 14)
+  x_train = get_center_mean(pp_x_train, x_train)
+  x_test = get_center_mean(pp_x_test, x_test)
 
-# garante que os dados são float e os normaliza
-x_train = x_train.astype('float32')
-x_test = x_test.astype('float32')
+  x_train = x_train.astype('float32')
+  x_test = x_test.astype('float32')
 
-sc = StandardScaler()
-x_train = sc.fit_transform(x_train)
-x_test = sc.transform(x_test)
+  sc = StandardScaler()
+  x_train = sc.fit_transform(x_train)
+  x_test = sc.transform(x_test)
+  
+  return [x_train, x_test]
 
-# aplica LDA nos dados de treino
+x_train, x_test = preprocessing(pp_x_train, pp_x_test)
 
-lda = LinearDiscriminantAnalysis(n_components = 2)
-x_lda_train = lda.fit_transform(x_train, y_train) # supervisionado
-
-y_pred = lda.predict(x_test)
-
-# # matriz de confusão e acuracia
-from sklearn.metrics import confusion_matrix  
-from sklearn.metrics import accuracy_score
-import pandas as pd
-import seaborn as sn
-
-cm = confusion_matrix(y_test, y_pred)  
-df_cm = pd.DataFrame(cm, index = [i for i in "0123456789"],
-                    columns = [i for i in "0123456789"])
-plt.figure(figsize = (10,7))
-sn.heatmap(df_cm)
-plt.show()
-
-print('Accuracy: ' + str(accuracy_score(y_test, y_pred)))  
-lda_classifier(x_train, y_train, x_test, y_test)
-knn_classifier(x_train, y_train, x_test, y_test)
+lda_classifier(x_train, y_train, x_test, y_test, 2)
+knn_classifier(x_train, y_train, x_test, y_test,2)
